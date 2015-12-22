@@ -32,7 +32,7 @@ static void D3D11FatalError(const char* err, ...)
 
 	std::string text(length, 0);
 	va_start(args, err);
-	vsprintf_s(&text[0], length, err, args);
+	vsprintf(&text[0], err, args);
 	va_end(args);
 
 	log("%s", text.c_str());

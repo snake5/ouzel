@@ -27,6 +27,9 @@ namespace ouzel
     Engine::Engine()
     {
         Settings settings;
+#ifdef OUZEL_PLATFORM_WINDOWS
+		settings.driver = Renderer::Driver::DIRECT3D11;
+#endif
         
         OuzelInit(settings);
         

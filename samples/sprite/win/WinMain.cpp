@@ -105,8 +105,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
         hInstance,
         NULL);
 	GMainWindow = window;
-    ouzel::Application application;
-	SetWindowLongPtrW(window, GWLP_USERDATA, (LONG_PTR)application.getEngine());
+    Engine* engine = new Engine;
+	SetWindowLongPtrW(window, GWLP_USERDATA, (LONG_PTR)engine);
+	engine->begin();
 	ShowWindow(window, SW_SHOW);
     
     bool run = true;
@@ -129,9 +130,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
             break;
         }
         
-        application.getEngine()->run();
+        engine->run();
     }
     
+    delete engine;
     DestroyWindow(window);
     
     return 0;
