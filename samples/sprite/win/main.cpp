@@ -8,6 +8,8 @@
 
 using namespace ouzel;
 
+extern HWND GMainWindow;
+
 
 static Engine* getEngine(HWND window)
 {
@@ -102,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         NULL,
         hInstance,
         NULL);
-    
+	GMainWindow = window;
     ouzel::Application application;
 	SetWindowLongPtrW(window, GWLP_USERDATA, (LONG_PTR)application.getEngine());
 	ShowWindow(window, SW_SHOW);

@@ -13,6 +13,7 @@ namespace ouzel
     Application::Application()
     {
         _engine = new Engine(Renderer::Driver::DIRECT3D11, Size2(640.0f, 480.0f), false);
+        _engine->getRenderer()->setClearColor(Color(20,40,60));
         _engine->addEventHandler(this);
     }
     
