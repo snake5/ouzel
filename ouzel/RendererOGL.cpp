@@ -10,7 +10,6 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Utils.h"
-#include "View.h"
 
 static const char TEXTURE_PIXEL_SHADER[] =
     "#version 400\n"
@@ -68,7 +67,6 @@ namespace ouzel
     RendererOGL::RendererOGL(const Size2& size, bool fullscreen, Engine* engine):
         Renderer(size, fullscreen, engine, Driver::OPENGL)
     {
-        _view = new View(size, this);
         recalculateProjection();
     }
     
@@ -98,18 +96,41 @@ namespace ouzel
         Shader* colorShader = loadShaderFromStrings(COLOR_PIXEL_SHADER, COLOR_VERTEX_SHADER);
         _shaders[SHADER_COLOR] = colorShader;
         
+        _ready = true;
+        
         _engine->begin();
         
         return true;
+    }
+    
+    bool RendererOGL::checkOpenGLErrors()
+    {
+        bool error = false;
+        
+        while (GLenum error = glGetError() != GL_NO_ERROR)
+        {
+            printf("OpenGL error: %d (%x)\n", error, error);
+            
+            error = true;
+        }
+        
+        return error;
+    }
+    
+    void RendererOGL::setClearColor(Color color)
+    {
+        Renderer::setClearColor(color);
+        
+        glClearColor(_clearColor.getR(), _clearColor.getG(), _clearColor.getB(), _clearColor.getA());
     }
 
     void RendererOGL::recalculateProjection()
     {
         Renderer::recalculateProjection();
         
-        if (_view)
+        if (_ready)
         {
-            glViewport(0, 0, _view->getSize().width, _view->getSize().height);
+            glViewport(0, 0, _size.width, _size.height);
         }
     }
     
@@ -296,8 +317,7 @@ namespace ouzel
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         
         ShaderOGL* colorShader = static_cast<ShaderOGL*>(getShader(SHADER_COLOR));
-        
-        glUseProgram(colorShader->getProgramId());
+        activateShader(colorShader);
         
         GLint uniProj = glGetUniformLocation(colorShader->getProgramId(), "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, _projection.m);
@@ -362,8 +382,7 @@ namespace ouzel
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         
         ShaderOGL* colorShader = static_cast<ShaderOGL*>(getShader(SHADER_COLOR));
-        
-        glUseProgram(colorShader->getProgramId());
+        activateShader(colorShader);
         
         GLint uniProj = glGetUniformLocation(colorShader->getProgramId(), "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, _projection.m);
@@ -431,8 +450,7 @@ namespace ouzel
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         
         ShaderOGL* colorShader = static_cast<ShaderOGL*>(getShader(SHADER_TEXTURE));
-        
-        glUseProgram(colorShader->getProgramId());
+        activateShader(colorShader);
         
         GLint uniProj = glGetUniformLocation(colorShader->getProgramId(), "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, _projection.m);
@@ -462,19 +480,5 @@ namespace ouzel
         glDeleteVertexArrays(1, &vertexArray);
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &indexBuffer);
-    }
-    
-    bool RendererOGL::checkOpenGLErrors()
-    {
-        bool error = false;
-        
-        while (GLenum error = glGetError() != GL_NO_ERROR)
-        {
-            printf("OpenGL error: %d (%x)\n", error, error);
-            
-            error = true;
-        }
-        
-        return error;
     }
 }

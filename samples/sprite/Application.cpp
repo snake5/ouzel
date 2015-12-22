@@ -10,20 +10,12 @@
 
 namespace ouzel
 {
-    Application::Application()
+    Application::Application(Engine* engine):
+        _engine(engine)
     {
-        _engine = new Engine(Renderer::Driver::DIRECT3D11, Size2(640.0f, 480.0f), false);
         _engine->getRenderer()->setClearColor(Color(20,40,60));
         _engine->addEventHandler(this);
-    }
-    
-    Application::~Application()
-    {
-        _engine->removeEventHandler(this);
-    }
-    
-    void Application::begin()
-    {
+        
         Sprite* sprite = new Sprite("tim-from-braid.png", _engine->getScene());
         _engine->getScene()->getRootNode()->addChild(sprite);
         
@@ -32,6 +24,11 @@ namespace ouzel
         _engine->getScene()->getRootNode()->addChild(witch);
         
         sprite->release();
+    }
+    
+    Application::~Application()
+    {
+        _engine->removeEventHandler(this);
     }
     
     bool Application::handleEvent(const Event& event)

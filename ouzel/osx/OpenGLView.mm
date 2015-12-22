@@ -4,22 +4,20 @@
 #import "OpenGLView.h"
 #include "Engine.h"
 #include "RendererOGL.h"
-#include "View.h"
 
 using namespace ouzel;
 
 @implementation OpenGLView
 
--(id)initWithFrame:(NSRect)frameRect view:(ouzel::View*)view
+-(id)initWithFrame:(NSRect)frameRect engine:(ouzel::Engine*)engine
 {
     self = [super initWithFrame:frameRect];
     if (self != nil)
     {
-        _view = view;
-        _renderer = _view->getRenderer();
-        _engine = _renderer->getEngine();
+        _engine = engine;
+        _renderer = _engine->getRenderer();
         
-        NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/30.0f target:self selector:@selector(idle:) userInfo:nil repeats:YES];
+        NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/60.0f target:self selector:@selector(idle:) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
         
         // Create pixel format
@@ -53,7 +51,7 @@ using namespace ouzel;
 
 -(void)update
 {
-    _view->resize(Size2(_frame.size.width, _frame.size.height));
+    _renderer->resize(Size2(_frame.size.width, _frame.size.height));
     
     [_openGLContext update];
 }
@@ -106,7 +104,7 @@ using namespace ouzel;
 {
     _pixelFormat = pixelFormat;
 }
-- (NSOpenGLPixelFormat*)pixelFormat
+-(NSOpenGLPixelFormat*)pixelFormat
 {
     return _pixelFormat;
 }

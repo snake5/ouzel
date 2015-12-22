@@ -21,4 +21,3 @@
 #include "Texture.h"
 #include "EventHander.h"
 #include "Utils.h"
-#include "View.h"
