@@ -180,7 +180,6 @@
     <ClInclude Include="..\ouzel\Vector4.h" />
     <ClInclude Include="..\ouzel\Vertex.h" />
     <ClInclude Include="..\ouzel\View.h" />
-    <ClInclude Include="..\ouzel\win32\Win32View.h" />
     <ClInclude Include="..\samples\sprite\Application.h" />
   </ItemGroup>
   <ItemGroup>

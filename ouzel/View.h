@@ -16,6 +16,10 @@ class NSView;
 #endif
 #endif
 
+#ifdef OUZEL_PLATFORM_WINDOWS
+#include <windows.h>
+#endif
+
 namespace ouzel
 {
     class Renderer;
@@ -28,25 +32,28 @@ namespace ouzel
         
         Renderer* getRenderer() const { return _renderer; }
         
-        virtual void lock();
+        void lock();
         
-        virtual bool processEvents();
-        virtual void resize(const Size2& size);
+        void resize(const Size2& size);
         const Size2& getSize() const { return _size; }
         
 #if defined(OUZEL_PLATFORM_OSX)
         NSView* getNativeView() const { return _nativeView; }
+#elif defined(OUZEL_PLATFORM_WINDOWS)
+        HWND getNativeView() const { return _nativeView; }
 #endif
         
     protected:
-        virtual void createNativeView();
-        virtual void destroyNativeView();
+        void createNativeView();
+        void destroyNativeView();
         
         Renderer* _renderer;
         Size2 _size;
         
 #if defined(OUZEL_PLATFORM_OSX)
         NSView* _nativeView = nullptr;
+#elif defined(OUZEL_PLATFORM_WINDOWS)
+        HWND _nativeView = 0;
 #endif
         
     };

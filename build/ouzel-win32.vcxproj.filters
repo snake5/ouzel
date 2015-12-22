@@ -40,9 +40,6 @@
     <ClInclude Include="..\samples\sprite\Application.h">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="..\ouzel\win32\Win32View.h">
-      <Filter>win32</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ouzel\Texture.cpp" />
@@ -91,7 +88,7 @@
       <UniqueIdentifier>{8d6a9b9b-b2c7-436d-abb6-be4899934451}</UniqueIdentifier>
     </Filter>
     <Filter Include="win32">
-      <UniqueIdentifier>{7e31a1da-8b7d-4100-97c8-4109091d3b05}</UniqueIdentifier>
+      <UniqueIdentifier>{50b681af-2a9a-4850-bb98-26187f6552cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

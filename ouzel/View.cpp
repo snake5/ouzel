@@ -23,11 +23,6 @@ namespace ouzel
     }
 #endif
     
-    bool View::processEvents()
-    {
-		return true;
-    }
-    
     void View::resize(const Size2& size)
     {
         _size = size;
