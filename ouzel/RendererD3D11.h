@@ -35,6 +35,9 @@ namespace ouzel
     public:
         RendererD3D11(const Size2& size, bool fullscreen, Engine* engine);
         virtual ~RendererD3D11();
+        
+        void initWindow();
+        void initD3D11();
 
         virtual void clear() override;
         virtual void flush() override;
@@ -42,6 +45,9 @@ namespace ouzel
         virtual bool activateTexture(Texture* texture, uint32_t layer) override;
         
     private:
+        bool _fullscreen;
+        HWND _window;
+        
         ID3D11Device* _device;
         ID3D11DeviceContext* _context;
         IDXGISwapChain* _swapChain;

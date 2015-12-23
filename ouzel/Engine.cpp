@@ -72,6 +72,31 @@ namespace ouzel
     void Engine::begin()
     {
         OuzelBegin(this);
+        
+#ifdef OUZEL_PLATFORM_WINDOWS
+        bool running = true;
+        while(running)
+        {
+            MSG msg;
+            while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+                
+                if (msg.message == WM_QUIT)
+                {
+					running = false;
+                    break;
+                }
+            }
+            if(running == false)
+            {
+                break;
+            }
+            
+            run();
+        }
+#endif
     }
     
     void Engine::run()
