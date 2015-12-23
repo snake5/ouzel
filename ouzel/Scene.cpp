@@ -16,8 +16,8 @@ namespace ouzel
     
     Scene::~Scene()
     {
-        if (!_camera) _camera->release();
-        if (!_rootNode) _rootNode->release();
+        if (_camera) _camera->release();
+        if (_rootNode) _rootNode->release();
     }
     
     bool Scene::init()

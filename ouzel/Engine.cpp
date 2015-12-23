@@ -64,9 +64,9 @@ namespace ouzel
     Engine::~Engine()
     {
         OuzelEnd();
-        
+
+		if (_scene) _scene->release();
         if (_renderer) _renderer->release();
-        if (_scene) _scene->release();
         if (_fileSystem) _fileSystem->release();
     }
     

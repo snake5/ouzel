@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "RendererD3D11.h"
 #include "Texture.h"
 
 namespace ouzel
@@ -12,5 +13,13 @@ namespace ouzel
     public:
         TextureD3D11(Renderer* renderer);
         virtual ~TextureD3D11();
+        
+        virtual bool initFromFile(const std::string& filename) override;
+        
+    protected:
+    	ID3D11Texture2D* _texture;
+    	ID3D11ShaderResourceView* _rsrcView;
+
+		friend class RendererD3D11;
     };
 }

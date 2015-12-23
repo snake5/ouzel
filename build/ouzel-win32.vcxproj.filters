@@ -40,6 +40,7 @@
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="..\ouzel\event.h" />
+    <ClInclude Include="..\ouzel\MeshBufferD3D11.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ouzel\Texture.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="..\samples\sprite\win\WinMain.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\ouzel\MeshBufferD3D11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="game">

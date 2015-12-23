@@ -9,11 +9,18 @@
 
 #include "RendererD3D11.h"
 #include "ShaderD3D11.h"
+#include "TextureD3D11.h"
+#include "MeshBufferD3D11.h"
 #include "EventHander.h"
 #include "Engine.h"
+#include "Scene.h"
+#include "Camera.h"
 #include "Utils.h"
 
 using namespace ouzel;
+
+
+#define D3D11_DEBUG 1
 
 
 #ifdef _MSC_VER
@@ -355,7 +362,7 @@ static int BufferCreate(ID3D11DeviceContext* ctx, ID3D11Device* device,
         return -1;
     }
     
-    return isDynamic ? BufferUpload(ctx, *out, true, true, NULL, numbytes) : 0;
+    return isDynamic && data == nullptr ? BufferUpload(ctx, *out, true, true, NULL, numbytes) : 0;
 }
 
 
@@ -405,6 +412,7 @@ RendererD3D11::RendererD3D11(const Size2& size, bool fullscreen, Engine* engine)
 {
     initWindow();
     initD3D11();
+    recalculateProjection();
 }
 
 void RendererD3D11::initWindow()
@@ -473,11 +481,15 @@ void RendererD3D11::initD3D11()
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
     
+    UINT deviceCreationFlags = 0;
+#if D3D11_DEBUG
+    deviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
     HRESULT hr = D3D11CreateDeviceAndSwapChain(
         NULL, // adapter
         D3D_DRIVER_TYPE_HARDWARE,
         NULL, // software rasterizer (unused)
-        D3D11_CREATE_DEVICE_DEBUG, // flags
+        deviceCreationFlags,
         NULL, // feature levels
         0, // ^^
         D3D11_SDK_VERSION,
@@ -540,7 +552,7 @@ void RendererD3D11::initD3D11()
     }
     
     // Blending state
-#if 0 // TODO
+#if 1
     D3D11_BLEND_DESC blendStateDesc = { FALSE, FALSE }; // alpha to coverage, independent blend
     D3D11_RENDER_TARGET_BLEND_DESC targetBlendDesc =
     {
@@ -572,11 +584,18 @@ void RendererD3D11::initD3D11()
     Shader* textureShader = loadShaderFromFiles("ps_texture.cso", "vs_common.cso");
     assert(textureShader && "Failed to load texture shader");
     _shaders[SHADER_TEXTURE] = textureShader;
+
+	D3D11_VIEWPORT viewport = { 0, 0, _size.width, _size.height, 0.0f, 1.0f };
+	_context->RSSetViewports(1, &viewport);
+	_context->OMSetRenderTargets(1, &_rtView, nullptr);
 }
 
 RendererD3D11::~RendererD3D11()
 {
+	freeInternalResources();
+
     SAFE_RELEASE(_depthStencilState);
+    SAFE_RELEASE(_blendState);
     SAFE_RELEASE(_rasterizerState);
     SAFE_RELEASE(_samplerState);
     _vertexBuffer.Free();
@@ -584,10 +603,33 @@ RendererD3D11::~RendererD3D11()
     SAFE_RELEASE(_rtView);
     SAFE_RELEASE(_backBuffer);
     SAFE_RELEASE(_swapChain);
-    SAFE_RELEASE(_context);
+    
+#if D3D11_DEBUG
+    ID3D11Debug *d3dDebug = nullptr;
+	if (SUCCEEDED(_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&d3dDebug)))
+	{
+		_context->ClearState();
+		_context->Flush();
+		SAFE_RELEASE(_context);
+		d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+		d3dDebug->Release();
+	}
+#endif
+	SAFE_RELEASE(_context);
     SAFE_RELEASE(_device);
     
     DestroyWindow(_window);
+}
+
+void RendererD3D11::clear()
+{
+    float color[4] = { _clearColor.getR(), _clearColor.getG(), _clearColor.getB(), _clearColor.getA() };
+    _context->ClearRenderTargetView(_rtView, color);
+}
+
+void RendererD3D11::flush()
+{
+    _swapChain->Present(1 /* TODO vsync off? */, 0);
 }
 
 Shader* RendererD3D11::loadShaderFromFiles(const std::string& fragmentShader, const std::string& vertexShader)
@@ -603,18 +645,69 @@ Shader* RendererD3D11::loadShaderFromFiles(const std::string& fragmentShader, co
     return shader;
 }
 
-void RendererD3D11::clear()
+Texture* RendererD3D11::loadTextureFromFile(const std::string& filename)
 {
-    float color[4] = { _clearColor.getR(), _clearColor.getG(), _clearColor.getB(), _clearColor.getA() };
-    _context->ClearRenderTargetView(_rtView, color);
+    TextureD3D11* texture = new TextureD3D11(this);
+    
+    if (!texture->initFromFile(filename))
+    {
+        delete texture;
+        texture = nullptr;
+    }
+    
+    return texture;
 }
 
-void RendererD3D11::flush()
+MeshBuffer* RendererD3D11::createMeshBuffer(const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices)
 {
-    _swapChain->Present(1 /* TODO vsync off? */, 0);
+    MeshBufferD3D11* meshBuffer = new MeshBufferD3D11(this);
+    
+    if (!meshBuffer->initFromData(indices, vertices))
+    {
+        delete meshBuffer;
+        meshBuffer = nullptr;
+    }
+    
+    return meshBuffer;
 }
 
-bool RendererD3D11::activateTexture(Texture* texture, uint32_t layer)
+bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transform)
 {
+    auto buffer = (MeshBufferD3D11*) meshBuffer;
+    auto shader = (ShaderD3D11*) _activeShader;
+
+	Matrix4 finalTransform = _projection * _engine->getScene()->getCamera()->getTransform() * transform;
+	_constantBuffer.Upload(_device, _context, &finalTransform, sizeof(Matrix4));
+    
+	ID3D11Buffer* constantBuffers[1] = { _constantBuffer };
+	_context->VSSetConstantBuffers(0, 1, constantBuffers);
+    _context->VSSetShader(shader->_vertexShader, NULL, 0);
+    _context->PSSetShader(shader->_pixelShader, NULL, 0);
+    _context->RSSetState(_rasterizerState);
+    _context->OMSetBlendState(_blendState, NULL, 0xffffffff);
+    _context->OMSetDepthStencilState(_depthStencilState, 0);
+    
+    ID3D11ShaderResourceView* rsrcViews[TEXTURE_LAYERS];
+    ID3D11SamplerState* samplerStates[TEXTURE_LAYERS];
+    for (int i = 0; i < TEXTURE_LAYERS; ++i)
+    {
+        auto texture = (TextureD3D11*) _activeTextures[i];
+        rsrcViews[i] = texture ? texture->_rsrcView : nullptr;
+        samplerStates[i] = texture ? _samplerState : nullptr;
+    }
+    _context->PSSetShaderResources(0, TEXTURE_LAYERS, rsrcViews);
+    _context->PSSetSamplers(0, TEXTURE_LAYERS, samplerStates);
+    
+    _context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _context->IASetInputLayout(shader->_inputLayout);
+    ID3D11Buffer* buffers[1] = { buffer->_vertexBuffer };
+    UINT strides[1] = { sizeof(Vertex) };
+    UINT offsets[1] = { 0 };
+    _context->IASetVertexBuffers(0, 1, buffers, strides, offsets);
+	_context->IASetIndexBuffer(buffer->_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	_context->DrawIndexed(buffer->_indexCount, 0, 0);
+    
     return true;
 }
+

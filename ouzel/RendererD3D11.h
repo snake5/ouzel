@@ -45,12 +45,14 @@ namespace ouzel
         void initWindow();
         void initD3D11();
         
-        virtual Shader* loadShaderFromFiles(const std::string& fragmentShader, const std::string& vertexShader) override;
-
         virtual void clear() override;
         virtual void flush() override;
-
-        virtual bool activateTexture(Texture* texture, uint32_t layer) override;
+        
+        virtual Shader* loadShaderFromFiles(const std::string& fragmentShader, const std::string& vertexShader) override;
+        virtual Texture* loadTextureFromFile(const std::string& filename) override;
+        
+        virtual MeshBuffer* createMeshBuffer(const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices);
+        virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transform = Matrix4());
         
     private:
         bool _fullscreen;
@@ -63,11 +65,14 @@ namespace ouzel
         ID3D11RenderTargetView* _rtView;
         ID3D11SamplerState* _samplerState;
         ID3D11RasterizerState* _rasterizerState;
+        ID3D11BlendState* _blendState;
         ID3D11DepthStencilState* _depthStencilState;
-
+        
         D3D11DynamicBuffer _vertexBuffer;
         D3D11DynamicBuffer _constantBuffer;
         
         friend class ShaderD3D11;
+        friend class TextureD3D11;
+        friend class MeshBufferD3D11;
     };
 }

@@ -23,5 +23,7 @@ namespace ouzel
         ID3D11VertexShader* _vertexShader;
         ID3D11PixelShader* _pixelShader;
         ID3D11InputLayout* _inputLayout;
+
+		friend class RendererD3D11;
     };
 }
