@@ -47,6 +47,224 @@ static RendererD3D11* getRenderer(HWND window)
     return (RendererD3D11*) GetWindowLongPtrW(window, GWLP_USERDATA);
 }
 
+KeyCode winKeyToEngineCode(WPARAM wParam, LPARAM lParam)
+{
+    switch(wParam)
+    {
+    case VK_PAUSE: return KeyCode::PAUSE;
+    case VK_SCROLL: return KeyCode::SCROLL_LOCK;
+    case VK_PRINT: return KeyCode::PRINT;
+    case VK_SNAPSHOT: return KeyCode::SYSREQ;
+    case VK_CANCEL: return KeyCode::BREAK;
+    case VK_ESCAPE: return KeyCode::ESCAPE;
+    case VK_BROWSER_BACK: return KeyCode::BACK;
+    case VK_BACK: return KeyCode::BACKSPACE;
+    case VK_TAB: return KeyCode::TAB;
+    case VK_OEM_BACKTAB: return KeyCode::BACK_TAB;
+	case VK_RETURN: return lParam & 0x1000000 ? KeyCode::KP_ENTER : KeyCode::RETURN;
+    case VK_CAPITAL: return KeyCode::CAPS_LOCK;
+    case VK_SHIFT: return KeyCode::SHIFT;
+    case VK_LSHIFT: return KeyCode::LEFT_SHIFT;
+    case VK_RSHIFT: return KeyCode::RIGHT_SHIFT;
+    case VK_CONTROL: return KeyCode::CTRL;
+    case VK_LCONTROL: return KeyCode::LEFT_CTRL;
+    case VK_RCONTROL: return KeyCode::RIGHT_CTRL;
+    case VK_MENU: return KeyCode::ALT;
+    case VK_LMENU: return KeyCode::LEFT_ALT;
+    case VK_RMENU: return KeyCode::RIGHT_ALT;
+    case VK_APPS: return KeyCode::MENU;
+    // KeyCode::HYPER ?
+	case VK_INSERT: return lParam & 0x1000000 ? KeyCode::KP_INSERT : KeyCode::INSERT;
+    case VK_HOME: return KeyCode::HOME;
+	case VK_PRIOR: return lParam & 0x1000000 ? KeyCode::KP_PG_UP : KeyCode::PG_UP;
+	case VK_DELETE: return lParam & 0x1000000 ? KeyCode::KP_DELETE : KeyCode::DELETE;
+    case VK_END: return KeyCode::END;
+    case VK_NEXT: return KeyCode::PG_DOWN;
+    case VK_LEFT: return KeyCode::LEFT_ARROW;
+    case VK_RIGHT: return KeyCode::RIGHT_ARROW;
+    case VK_UP: return KeyCode::UP_ARROW;
+    case VK_DOWN: return KeyCode::DOWN_ARROW;
+    case VK_NUMLOCK: return KeyCode::NUM_LOCK;
+    case VK_ADD: return KeyCode::KP_PLUS;
+    case VK_SUBTRACT: return KeyCode::KP_MINUS;
+    case VK_MULTIPLY: return KeyCode::KP_MULTIPLY;
+    case VK_DIVIDE: return KeyCode::KP_DIVIDE;
+    // KeyCode::KP_ENTER -- see VK_RETURN
+#if 0 // should be same as the standard keys
+    case : return KeyCode::KP_HOME;
+    case : return KeyCode::KP_UP;
+    case : return KeyCode::KP_PG_UP;
+    case : return KeyCode::KP_LEFT;
+    case : return KeyCode::KP_FIVE;
+    case : return KeyCode::KP_RIGHT;
+    case : return KeyCode::KP_END;
+    case : return KeyCode::KP_DOWN;
+    case : return KeyCode::KP_PG_DOWN;
+    case : return KeyCode::KP_INSERT;
+    case : return KeyCode::KP_DELETE;
+#endif
+    case VK_F1: return KeyCode::F1;
+    case VK_F2: return KeyCode::F2;
+    case VK_F3: return KeyCode::F3;
+    case VK_F4: return KeyCode::F4;
+    case VK_F5: return KeyCode::F5;
+    case VK_F6: return KeyCode::F6;
+    case VK_F7: return KeyCode::F7;
+    case VK_F8: return KeyCode::F8;
+    case VK_F9: return KeyCode::F9;
+    case VK_F10: return KeyCode::F10;
+    case VK_F11: return KeyCode::F11;
+    case VK_F12: return KeyCode::F12;
+    case VK_SPACE: return KeyCode::SPACE;
+#if 0
+    case : return KeyCode::EXCLAM;
+    case : return KeyCode::QUOTE;
+    case : return KeyCode::NUMBER;
+    case : return KeyCode::DOLLAR;
+    case : return KeyCode::PERCENT;
+    case : return KeyCode::CIRCUMFLEX;
+    case : return KeyCode::AMPERSAND;
+    case : return KeyCode::APOSTROPHE;
+    case : return KeyCode::LEFT_PARENTHESIS;
+    case : return KeyCode::RIGHT_PARENTHESIS;
+    case : return KeyCode::ASTERISK;
+    case : return KeyCode::PLUS;
+	case : return KeyCode::MINUS;
+#endif
+    case VK_OEM_COMMA: return KeyCode::COMMA;
+    case VK_OEM_PERIOD: return KeyCode::PERIOD;
+    // case : return KeyCode::SLASH; // which one?
+    case '0': return KeyCode::KEY_0;
+    case '1': return KeyCode::KEY_1;
+    case '2': return KeyCode::KEY_2;
+    case '3': return KeyCode::KEY_3;
+    case '4': return KeyCode::KEY_4;
+    case '5': return KeyCode::KEY_5;
+    case '6': return KeyCode::KEY_6;
+    case '7': return KeyCode::KEY_7;
+    case '8': return KeyCode::KEY_8;
+    case '9': return KeyCode::KEY_9;
+    case VK_NUMPAD0: return KeyCode::NUMPAD_0;
+    case VK_NUMPAD1: return KeyCode::NUMPAD_1;
+    case VK_NUMPAD2: return KeyCode::NUMPAD_2;
+    case VK_NUMPAD3: return KeyCode::NUMPAD_3;
+    case VK_NUMPAD4: return KeyCode::NUMPAD_4;
+    case VK_NUMPAD5: return KeyCode::NUMPAD_5;
+    case VK_NUMPAD6: return KeyCode::NUMPAD_6;
+    case VK_NUMPAD7: return KeyCode::NUMPAD_7;
+    case VK_NUMPAD8: return KeyCode::NUMPAD_8;
+    case VK_NUMPAD9: return KeyCode::NUMPAD_9;
+#if 0
+    case : return KeyCode::COLON;
+    case : return KeyCode::SEMICOLON;
+    case : return KeyCode::LESS_THAN;
+    case : return KeyCode::EQUAL;
+    case : return KeyCode::GREATER_THAN;
+    case : return KeyCode::QUESTION;
+    case : return KeyCode::AT;
+    case : return KeyCode::CAPITAL_A;
+    case : return KeyCode::CAPITAL_B;
+    case : return KeyCode::CAPITAL_C;
+    case : return KeyCode::CAPITAL_D;
+    case : return KeyCode::CAPITAL_E;
+    case : return KeyCode::CAPITAL_F;
+    case : return KeyCode::CAPITAL_G;
+    case : return KeyCode::CAPITAL_H;
+    case : return KeyCode::CAPITAL_I;
+    case : return KeyCode::CAPITAL_J;
+    case : return KeyCode::CAPITAL_K;
+    case : return KeyCode::CAPITAL_L;
+    case : return KeyCode::CAPITAL_M;
+    case : return KeyCode::CAPITAL_N;
+    case : return KeyCode::CAPITAL_O;
+    case : return KeyCode::CAPITAL_P;
+    case : return KeyCode::CAPITAL_Q;
+    case : return KeyCode::CAPITAL_R;
+    case : return KeyCode::CAPITAL_S;
+    case : return KeyCode::CAPITAL_T;
+    case : return KeyCode::CAPITAL_U;
+    case : return KeyCode::CAPITAL_V;
+    case : return KeyCode::CAPITAL_W;
+    case : return KeyCode::CAPITAL_X;
+    case : return KeyCode::CAPITAL_Y;
+    case : return KeyCode::CAPITAL_Z;
+    case : return KeyCode::LEFT_BRACKET;
+    case : return KeyCode::BACK_SLASH;
+    case : return KeyCode::RIGHT_BRACKET;
+    case : return KeyCode::UNDERSCORE;
+    case : return KeyCode::GRAVE;
+#endif
+    case 'A': return KeyCode::A;
+    case 'B': return KeyCode::B;
+    case 'C': return KeyCode::C;
+    case 'D': return KeyCode::D;
+    case 'E': return KeyCode::E;
+    case 'F': return KeyCode::F;
+    case 'G': return KeyCode::G;
+    case 'H': return KeyCode::H;
+    case 'I': return KeyCode::I;
+    case 'J': return KeyCode::J;
+    case 'K': return KeyCode::K;
+    case 'L': return KeyCode::L;
+    case 'M': return KeyCode::M;
+    case 'N': return KeyCode::N;
+    case 'O': return KeyCode::O;
+    case 'P': return KeyCode::P;
+    case 'Q': return KeyCode::Q;
+    case 'R': return KeyCode::R;
+    case 'S': return KeyCode::S;
+    case 'T': return KeyCode::T;
+    case 'U': return KeyCode::U;
+    case 'V': return KeyCode::V;
+    case 'W': return KeyCode::W;
+    case 'X': return KeyCode::X;
+    case 'Y': return KeyCode::Y;
+    case 'Z': return KeyCode::Z;
+#if 0
+    case : return KeyCode::LEFT_BRACE;
+    case : return KeyCode::BAR;
+    case : return KeyCode::RIGHT_BRACE;
+    case : return KeyCode::TILDE;
+    case : return KeyCode::EURO;
+    case : return KeyCode::POUND;
+    case : return KeyCode::YEN;
+    case : return KeyCode::MIDDLE_DOT;
+#endif
+    case VK_BROWSER_SEARCH: return KeyCode::SEARCH;
+#if 0
+    case : return KeyCode::DPAD_LEFT;
+    case : return KeyCode::DPAD_RIGHT;
+    case : return KeyCode::DPAD_UP;
+    case : return KeyCode::DPAD_DOWN;
+    case : return KeyCode::DPAD_CENTER;
+    case : return KeyCode::ENTER;
+#endif
+    case VK_PLAY: return KeyCode::PLAY;
+    }
+    return KeyCode::NONE;
+}
+
+static void keyEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	bool isDown = msg == WM_KEYDOWN;
+	KeyCode key = winKeyToEngineCode(wParam, lParam);
+	RendererD3D11* renderer = getRenderer(window);
+
+	Event event;
+	memset(&event, 0, sizeof(event));
+	event.type = isDown ? Event::Type::KEY_DOWN : Event::Type::KEY_UP;
+	event.key = (uint32_t) key;
+	if (wParam & MK_SHIFT)
+	{
+		event.shiftDown = true;
+	}
+	if (wParam & MK_CONTROL)
+	{
+		event.controlDown = true;
+	}
+	renderer->getEngine()->handleEvent(event);
+}
+
 static void mouseButtonEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     bool isDown = msg == WM_LBUTTONDOWN || msg == WM_RBUTTONDOWN || msg == WM_MBUTTONDOWN;
@@ -83,8 +301,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
     switch(msg)
     {
     case WM_KEYUP:
-        break;
     case WM_KEYDOWN:
+		keyEvent(window, msg, wParam, lParam);
         break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONUP:
