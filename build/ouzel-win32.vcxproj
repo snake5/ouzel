@@ -156,6 +156,7 @@
     <ClInclude Include="..\ouzel\Color.h" />
     <ClInclude Include="..\ouzel\CompileConfig.h" />
     <ClInclude Include="..\ouzel\Engine.h" />
+    <ClInclude Include="..\ouzel\event.h" />
     <ClInclude Include="..\ouzel\EventHander.h" />
     <ClInclude Include="..\ouzel\FileSystem.h" />
     <ClInclude Include="..\ouzel\Image.h" />

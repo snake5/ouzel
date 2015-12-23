@@ -39,6 +39,7 @@
     <ClInclude Include="..\samples\sprite\Application.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="..\ouzel\event.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ouzel\Texture.cpp" />

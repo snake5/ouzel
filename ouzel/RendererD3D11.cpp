@@ -45,220 +45,178 @@ static RendererD3D11* getRenderer(HWND window)
     return (RendererD3D11*) GetWindowLongPtrW(window, GWLP_USERDATA);
 }
 
-KeyCode winKeyToEngineCode(WPARAM wParam, LPARAM lParam)
+KeyboardKey winKeyToEngineCode(WPARAM wParam, LPARAM lParam)
 {
     switch(wParam)
     {
-    case VK_PAUSE: return KeyCode::PAUSE;
-    case VK_SCROLL: return KeyCode::SCROLL_LOCK;
-    case VK_PRINT: return KeyCode::PRINT;
-    case VK_SNAPSHOT: return KeyCode::SYSREQ;
-    case VK_CANCEL: return KeyCode::BREAK;
-    case VK_ESCAPE: return KeyCode::ESCAPE;
-    case VK_BROWSER_BACK: return KeyCode::BACK;
-    case VK_BACK: return KeyCode::BACKSPACE;
-    case VK_TAB: return KeyCode::TAB;
-    case VK_OEM_BACKTAB: return KeyCode::BACK_TAB;
-	case VK_RETURN: return lParam & 0x1000000 ? KeyCode::KP_ENTER : KeyCode::RETURN;
-    case VK_CAPITAL: return KeyCode::CAPS_LOCK;
-    case VK_SHIFT: return KeyCode::SHIFT;
-    case VK_LSHIFT: return KeyCode::LEFT_SHIFT;
-    case VK_RSHIFT: return KeyCode::RIGHT_SHIFT;
-    case VK_CONTROL: return KeyCode::CTRL;
-    case VK_LCONTROL: return KeyCode::LEFT_CTRL;
-    case VK_RCONTROL: return KeyCode::RIGHT_CTRL;
-    case VK_MENU: return KeyCode::ALT;
-    case VK_LMENU: return KeyCode::LEFT_ALT;
-    case VK_RMENU: return KeyCode::RIGHT_ALT;
-    case VK_APPS: return KeyCode::MENU;
-    // KeyCode::HYPER ?
-	case VK_INSERT: return lParam & 0x1000000 ? KeyCode::KP_INSERT : KeyCode::INSERT;
-    case VK_HOME: return KeyCode::HOME;
-	case VK_PRIOR: return lParam & 0x1000000 ? KeyCode::KP_PG_UP : KeyCode::PG_UP;
-	case VK_DELETE: return lParam & 0x1000000 ? KeyCode::KP_DELETE : KeyCode::DELETE;
-    case VK_END: return KeyCode::END;
-    case VK_NEXT: return KeyCode::PG_DOWN;
-    case VK_LEFT: return KeyCode::LEFT_ARROW;
-    case VK_RIGHT: return KeyCode::RIGHT_ARROW;
-    case VK_UP: return KeyCode::UP_ARROW;
-    case VK_DOWN: return KeyCode::DOWN_ARROW;
-    case VK_NUMLOCK: return KeyCode::NUM_LOCK;
-    case VK_ADD: return KeyCode::KP_PLUS;
-    case VK_SUBTRACT: return KeyCode::KP_MINUS;
-    case VK_MULTIPLY: return KeyCode::KP_MULTIPLY;
-    case VK_DIVIDE: return KeyCode::KP_DIVIDE;
-    // KeyCode::KP_ENTER -- see VK_RETURN
-#if 0 // should be same as the standard keys
-    case : return KeyCode::KP_HOME;
-    case : return KeyCode::KP_UP;
-    case : return KeyCode::KP_PG_UP;
-    case : return KeyCode::KP_LEFT;
-    case : return KeyCode::KP_FIVE;
-    case : return KeyCode::KP_RIGHT;
-    case : return KeyCode::KP_END;
-    case : return KeyCode::KP_DOWN;
-    case : return KeyCode::KP_PG_DOWN;
-    case : return KeyCode::KP_INSERT;
-    case : return KeyCode::KP_DELETE;
-#endif
-    case VK_F1: return KeyCode::F1;
-    case VK_F2: return KeyCode::F2;
-    case VK_F3: return KeyCode::F3;
-    case VK_F4: return KeyCode::F4;
-    case VK_F5: return KeyCode::F5;
-    case VK_F6: return KeyCode::F6;
-    case VK_F7: return KeyCode::F7;
-    case VK_F8: return KeyCode::F8;
-    case VK_F9: return KeyCode::F9;
-    case VK_F10: return KeyCode::F10;
-    case VK_F11: return KeyCode::F11;
-    case VK_F12: return KeyCode::F12;
-    case VK_SPACE: return KeyCode::SPACE;
-#if 0
-    case : return KeyCode::EXCLAM;
-    case : return KeyCode::QUOTE;
-    case : return KeyCode::NUMBER;
-    case : return KeyCode::DOLLAR;
-    case : return KeyCode::PERCENT;
-    case : return KeyCode::CIRCUMFLEX;
-    case : return KeyCode::AMPERSAND;
-    case : return KeyCode::APOSTROPHE;
-    case : return KeyCode::LEFT_PARENTHESIS;
-    case : return KeyCode::RIGHT_PARENTHESIS;
-    case : return KeyCode::ASTERISK;
-    case : return KeyCode::PLUS;
-	case : return KeyCode::MINUS;
-#endif
-    case VK_OEM_COMMA: return KeyCode::COMMA;
-    case VK_OEM_PERIOD: return KeyCode::PERIOD;
-    // case : return KeyCode::SLASH; // which one?
-    case '0': return KeyCode::KEY_0;
-    case '1': return KeyCode::KEY_1;
-    case '2': return KeyCode::KEY_2;
-    case '3': return KeyCode::KEY_3;
-    case '4': return KeyCode::KEY_4;
-    case '5': return KeyCode::KEY_5;
-    case '6': return KeyCode::KEY_6;
-    case '7': return KeyCode::KEY_7;
-    case '8': return KeyCode::KEY_8;
-    case '9': return KeyCode::KEY_9;
-    case VK_NUMPAD0: return KeyCode::NUMPAD_0;
-    case VK_NUMPAD1: return KeyCode::NUMPAD_1;
-    case VK_NUMPAD2: return KeyCode::NUMPAD_2;
-    case VK_NUMPAD3: return KeyCode::NUMPAD_3;
-    case VK_NUMPAD4: return KeyCode::NUMPAD_4;
-    case VK_NUMPAD5: return KeyCode::NUMPAD_5;
-    case VK_NUMPAD6: return KeyCode::NUMPAD_6;
-    case VK_NUMPAD7: return KeyCode::NUMPAD_7;
-    case VK_NUMPAD8: return KeyCode::NUMPAD_8;
-    case VK_NUMPAD9: return KeyCode::NUMPAD_9;
-#if 0
-    case : return KeyCode::COLON;
-    case : return KeyCode::SEMICOLON;
-    case : return KeyCode::LESS_THAN;
-    case : return KeyCode::EQUAL;
-    case : return KeyCode::GREATER_THAN;
-    case : return KeyCode::QUESTION;
-    case : return KeyCode::AT;
-    case : return KeyCode::CAPITAL_A;
-    case : return KeyCode::CAPITAL_B;
-    case : return KeyCode::CAPITAL_C;
-    case : return KeyCode::CAPITAL_D;
-    case : return KeyCode::CAPITAL_E;
-    case : return KeyCode::CAPITAL_F;
-    case : return KeyCode::CAPITAL_G;
-    case : return KeyCode::CAPITAL_H;
-    case : return KeyCode::CAPITAL_I;
-    case : return KeyCode::CAPITAL_J;
-    case : return KeyCode::CAPITAL_K;
-    case : return KeyCode::CAPITAL_L;
-    case : return KeyCode::CAPITAL_M;
-    case : return KeyCode::CAPITAL_N;
-    case : return KeyCode::CAPITAL_O;
-    case : return KeyCode::CAPITAL_P;
-    case : return KeyCode::CAPITAL_Q;
-    case : return KeyCode::CAPITAL_R;
-    case : return KeyCode::CAPITAL_S;
-    case : return KeyCode::CAPITAL_T;
-    case : return KeyCode::CAPITAL_U;
-    case : return KeyCode::CAPITAL_V;
-    case : return KeyCode::CAPITAL_W;
-    case : return KeyCode::CAPITAL_X;
-    case : return KeyCode::CAPITAL_Y;
-    case : return KeyCode::CAPITAL_Z;
-    case : return KeyCode::LEFT_BRACKET;
-    case : return KeyCode::BACK_SLASH;
-    case : return KeyCode::RIGHT_BRACKET;
-    case : return KeyCode::UNDERSCORE;
-    case : return KeyCode::GRAVE;
-#endif
-    case 'A': return KeyCode::A;
-    case 'B': return KeyCode::B;
-    case 'C': return KeyCode::C;
-    case 'D': return KeyCode::D;
-    case 'E': return KeyCode::E;
-    case 'F': return KeyCode::F;
-    case 'G': return KeyCode::G;
-    case 'H': return KeyCode::H;
-    case 'I': return KeyCode::I;
-    case 'J': return KeyCode::J;
-    case 'K': return KeyCode::K;
-    case 'L': return KeyCode::L;
-    case 'M': return KeyCode::M;
-    case 'N': return KeyCode::N;
-    case 'O': return KeyCode::O;
-    case 'P': return KeyCode::P;
-    case 'Q': return KeyCode::Q;
-    case 'R': return KeyCode::R;
-    case 'S': return KeyCode::S;
-    case 'T': return KeyCode::T;
-    case 'U': return KeyCode::U;
-    case 'V': return KeyCode::V;
-    case 'W': return KeyCode::W;
-    case 'X': return KeyCode::X;
-    case 'Y': return KeyCode::Y;
-    case 'Z': return KeyCode::Z;
-#if 0
-    case : return KeyCode::LEFT_BRACE;
-    case : return KeyCode::BAR;
-    case : return KeyCode::RIGHT_BRACE;
-    case : return KeyCode::TILDE;
-    case : return KeyCode::EURO;
-    case : return KeyCode::POUND;
-    case : return KeyCode::YEN;
-    case : return KeyCode::MIDDLE_DOT;
-#endif
-    case VK_BROWSER_SEARCH: return KeyCode::SEARCH;
-#if 0
-    case : return KeyCode::DPAD_LEFT;
-    case : return KeyCode::DPAD_RIGHT;
-    case : return KeyCode::DPAD_UP;
-    case : return KeyCode::DPAD_DOWN;
-    case : return KeyCode::DPAD_CENTER;
-    case : return KeyCode::ENTER;
-#endif
-    case VK_PLAY: return KeyCode::PLAY;
+    case VK_CANCEL: return KeyboardKey::CANCEL;
+    case VK_BACK: return KeyboardKey::BACKSPACE;
+    case VK_TAB: return KeyboardKey::TAB;
+    case VK_CLEAR: return KeyboardKey::CLEAR;
+    case VK_RETURN: return KeyboardKey::RETURN;
+    case VK_SHIFT: return KeyboardKey::SHIFT;
+    case VK_CONTROL: return KeyboardKey::CONTROL;
+    case VK_MENU: return KeyboardKey::MENU;
+    case VK_PAUSE: return KeyboardKey::PAUSE;
+    case VK_CAPITAL: return KeyboardKey::CAPITAL;
+    
+    // ... Japanese ...
+    
+    case VK_ESCAPE: return KeyboardKey::ESCAPE;
+    
+    // ... IME ...
+    
+    case VK_SPACE: return KeyboardKey::SPACE;
+    case VK_PRIOR: return KeyboardKey::PRIOR;
+    case VK_NEXT: return KeyboardKey::NEXT;
+    case VK_END: return KeyboardKey::END;
+    case VK_HOME: return KeyboardKey::HOME;
+    case VK_LEFT: return KeyboardKey::LEFT;
+    case VK_UP: return KeyboardKey::UP;
+    case VK_RIGHT: return KeyboardKey::RIGHT;
+    case VK_DOWN: return KeyboardKey::DOWN;
+    
+    case VK_SELECT: return KeyboardKey::SELECT;
+    case VK_PRINT: return KeyboardKey::PRINT;
+    case VK_EXECUTE: return KeyboardKey::EXECUT;
+    
+    case VK_SNAPSHOT: return KeyboardKey::SNAPSHOT;
+    case VK_INSERT: return KeyboardKey::INSERT;
+    case VK_DELETE: return KeyboardKey::DELETE;
+    case VK_HELP: return KeyboardKey::HELP;
+    
+    case '0': return KeyboardKey::KEY_0;
+    case '1': return KeyboardKey::KEY_1;
+    case '2': return KeyboardKey::KEY_2;
+    case '3': return KeyboardKey::KEY_3;
+    case '4': return KeyboardKey::KEY_4;
+    case '5': return KeyboardKey::KEY_5;
+    case '6': return KeyboardKey::KEY_6;
+    case '7': return KeyboardKey::KEY_7;
+    case '8': return KeyboardKey::KEY_8;
+    case '9': return KeyboardKey::KEY_9;
+    
+    case 'A': return KeyboardKey::KEY_A;
+    case 'B': return KeyboardKey::KEY_B;
+    case 'C': return KeyboardKey::KEY_C;
+    case 'D': return KeyboardKey::KEY_D;
+    case 'E': return KeyboardKey::KEY_E;
+    case 'F': return KeyboardKey::KEY_F;
+    case 'G': return KeyboardKey::KEY_G;
+    case 'H': return KeyboardKey::KEY_H;
+    case 'I': return KeyboardKey::KEY_I;
+    case 'J': return KeyboardKey::KEY_J;
+    case 'K': return KeyboardKey::KEY_K;
+    case 'L': return KeyboardKey::KEY_L;
+    case 'M': return KeyboardKey::KEY_M;
+    case 'N': return KeyboardKey::KEY_N;
+    case 'O': return KeyboardKey::KEY_O;
+    case 'P': return KeyboardKey::KEY_P;
+    case 'Q': return KeyboardKey::KEY_Q;
+    case 'R': return KeyboardKey::KEY_R;
+    case 'S': return KeyboardKey::KEY_S;
+    case 'T': return KeyboardKey::KEY_T;
+    case 'U': return KeyboardKey::KEY_U;
+    case 'V': return KeyboardKey::KEY_V;
+    case 'W': return KeyboardKey::KEY_W;
+    case 'X': return KeyboardKey::KEY_X;
+    case 'Y': return KeyboardKey::KEY_Y;
+    case 'Z': return KeyboardKey::KEY_Z;
+    
+    case VK_LWIN: return KeyboardKey::LWIN;
+    case VK_RWIN: return KeyboardKey::RWIN;
+    case VK_APPS: return KeyboardKey::MENU;
+    case VK_SLEEP: return KeyboardKey::SLEEP;
+    
+    case VK_NUMPAD0: return KeyboardKey::NUMPAD0;
+    case VK_NUMPAD1: return KeyboardKey::NUMPAD1;
+    case VK_NUMPAD2: return KeyboardKey::NUMPAD2;
+    case VK_NUMPAD3: return KeyboardKey::NUMPAD3;
+    case VK_NUMPAD4: return KeyboardKey::NUMPAD4;
+    case VK_NUMPAD5: return KeyboardKey::NUMPAD5;
+    case VK_NUMPAD6: return KeyboardKey::NUMPAD6;
+    case VK_NUMPAD7: return KeyboardKey::NUMPAD7;
+    case VK_NUMPAD8: return KeyboardKey::NUMPAD8;
+    case VK_NUMPAD9: return KeyboardKey::NUMPAD9;
+    
+    case VK_MULTIPLY: return KeyboardKey::MULTIPLY;
+    case VK_ADD: return KeyboardKey::ADD;
+    case VK_SEPARATOR: return KeyboardKey::SEPARATOR;
+    case VK_SUBTRACT: return KeyboardKey::SUBTRACT;
+    case VK_DECIMAL: return KeyboardKey::DECIMAL;
+    case VK_DIVIDE: return KeyboardKey::DIVIDE;
+    
+    case VK_F1: return KeyboardKey::F1;
+    case VK_F2: return KeyboardKey::F2;
+    case VK_F3: return KeyboardKey::F3;
+    case VK_F4: return KeyboardKey::F4;
+    case VK_F5: return KeyboardKey::F5;
+    case VK_F6: return KeyboardKey::F6;
+    case VK_F7: return KeyboardKey::F7;
+    case VK_F8: return KeyboardKey::F8;
+    case VK_F9: return KeyboardKey::F9;
+    case VK_F10: return KeyboardKey::F10;
+    case VK_F11: return KeyboardKey::F11;
+    case VK_F12: return KeyboardKey::F12;
+    case VK_F13: return KeyboardKey::F13;
+    case VK_F14: return KeyboardKey::F14;
+    case VK_F15: return KeyboardKey::F15;
+    case VK_F16: return KeyboardKey::F16;
+    case VK_F17: return KeyboardKey::F17;
+    case VK_F18: return KeyboardKey::F18;
+    case VK_F19: return KeyboardKey::F19;
+    case VK_F20: return KeyboardKey::F20;
+    case VK_F21: return KeyboardKey::F21;
+    case VK_F22: return KeyboardKey::F22;
+    case VK_F23: return KeyboardKey::F23;
+    case VK_F24: return KeyboardKey::F24;
+    
+    case VK_NUMLOCK: return KeyboardKey::NUMLOCK;
+    case VK_SCROLL: return KeyboardKey::SCROLL;
+    case VK_LSHIFT: return KeyboardKey::LSHIFT;
+    case VK_RSHIFT: return KeyboardKey::RSHIFT;
+    case VK_LCONTROL: return KeyboardKey::LCONTROL;
+    case VK_RCONTROL: return KeyboardKey::RCONTROL;
+    case VK_LMENU: return KeyboardKey::LMENU;
+    case VK_RMENU: return KeyboardKey::RMENU;
+    
+    case VK_OEM_1: return KeyboardKey::OEM_1;
+    case VK_OEM_PLUS: return KeyboardKey::PLUS;
+    case VK_OEM_COMMA: return KeyboardKey::COMMA;
+    case VK_OEM_MINUS: return KeyboardKey::MINUS;
+    case VK_OEM_PERIOD: return KeyboardKey::PERIOD;
+    case VK_OEM_2: return KeyboardKey::OEM_2;
+    case VK_OEM_3: return KeyboardKey::OEM_3;
+    case VK_OEM_4: return KeyboardKey::OEM_4;
+    case VK_OEM_5: return KeyboardKey::OEM_5;
+    case VK_OEM_6: return KeyboardKey::OEM_6;
+    case VK_OEM_7: return KeyboardKey::OEM_7;
+    case VK_OEM_8: return KeyboardKey::OEM_8;
+    case VK_OEM_AX: return KeyboardKey::OEM_AX;
+    case VK_OEM_102: return KeyboardKey::OEM_102;
+    
+    // ... misc keys ...
     }
-    return KeyCode::NONE;
+    return KeyboardKey::NONE;
 }
 
 static void keyEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	bool isDown = msg == WM_KEYDOWN;
-	KeyCode key = winKeyToEngineCode(wParam, lParam);
+	KeyboardKey key = winKeyToEngineCode(wParam, lParam);
 	RendererD3D11* renderer = getRenderer(window);
 
 	Event event;
 	memset(&event, 0, sizeof(event));
 	event.type = isDown ? Event::Type::KEY_DOWN : Event::Type::KEY_UP;
-	event.key = (uint32_t) key;
+	event.keyboardEvent.key = key;
 	if (wParam & MK_SHIFT)
 	{
-		event.shiftDown = true;
+		event.keyboardEvent.shiftDown = true;
 	}
 	if (wParam & MK_CONTROL)
 	{
-		event.controlDown = true;
+		event.keyboardEvent.controlDown = true;
 	}
 	renderer->getEngine()->handleEvent(event);
 }
@@ -266,14 +224,14 @@ static void keyEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 static void mouseButtonEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     bool isDown = msg == WM_LBUTTONDOWN || msg == WM_RBUTTONDOWN || msg == WM_MBUTTONDOWN;
-    int button = 0;
+    MouseButton button = MouseButton::LBUTTON;
     if(msg == WM_RBUTTONDOWN || msg == WM_RBUTTONUP)
     {
-        button = 1;
+        button = MouseButton::RBUTTON;
     }
     else if(msg == WM_MBUTTONDOWN || msg == WM_MBUTTONUP)
     {
-        button = 2;
+        button = MouseButton::MBUTTON;
     }
     RendererD3D11* renderer = getRenderer(window);
     Vector2 pos((float) GET_X_LPARAM(lParam), (float) GET_Y_LPARAM(lParam));
@@ -281,16 +239,8 @@ static void mouseButtonEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam
     Event event;
     memset(&event, 0, sizeof(event));
     event.type = isDown ? Event::Type::MOUSE_DOWN : Event::Type::MOUSE_UP;
-    event.mouseButton = button;
-    event.mousePosition = renderer->absoluteToWorldLocation(pos);
-    if(wParam & MK_SHIFT)
-    {
-        event.shiftDown = true;
-    }
-    if(wParam & MK_CONTROL)
-    {
-        event.controlDown = true;
-    }
+    event.mouseEvent.button = button;
+    event.mouseEvent.position = renderer->absoluteToWorldLocation(pos);
     renderer->getEngine()->handleEvent(event);
 }
 
