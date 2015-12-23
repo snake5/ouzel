@@ -24,18 +24,18 @@ using namespace ouzel;
 
 void D3D11FatalError(const char* err, ...)
 {
-	va_list args;
-	va_start(args, err);
-	int length = VSPRINTF_LEN(err, args);
-	va_end(args);
+    va_list args;
+    va_start(args, err);
+    int length = VSPRINTF_LEN(err, args);
+    va_end(args);
 
-	std::string text(length, 0);
-	va_start(args, err);
-	vsprintf(&text[0], err, args);
-	va_end(args);
+    std::string text(length, 0);
+    va_start(args, err);
+    vsprintf(&text[0], err, args);
+    va_end(args);
 
-	log("%s", text.c_str());
-	MessageBoxA(nullptr, text.c_str(), "Fatal Ouzel/Direct3D11 error", MB_ICONERROR);
+    log("%s", text.c_str());
+    MessageBoxA(nullptr, text.c_str(), "Fatal Ouzel/Direct3D11 error", MB_ICONERROR);
     FatalExit(1);
 }
 
@@ -202,23 +202,23 @@ KeyboardKey winKeyToEngineCode(WPARAM wParam, LPARAM lParam)
 
 static void keyEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	bool isDown = msg == WM_KEYDOWN;
-	KeyboardKey key = winKeyToEngineCode(wParam, lParam);
-	RendererD3D11* renderer = getRenderer(window);
+    bool isDown = msg == WM_KEYDOWN;
+    KeyboardKey key = winKeyToEngineCode(wParam, lParam);
+    RendererD3D11* renderer = getRenderer(window);
 
-	Event event;
-	memset(&event, 0, sizeof(event));
-	event.type = isDown ? Event::Type::KEY_DOWN : Event::Type::KEY_UP;
-	event.keyboardEvent.key = key;
-	if (wParam & MK_SHIFT)
-	{
-		event.keyboardEvent.shiftDown = true;
-	}
-	if (wParam & MK_CONTROL)
-	{
-		event.keyboardEvent.controlDown = true;
-	}
-	renderer->getEngine()->handleEvent(event);
+    Event event;
+    memset(&event, 0, sizeof(event));
+    event.type = isDown ? Event::Type::KEY_DOWN : Event::Type::KEY_UP;
+    event.keyboardEvent.key = key;
+    if (wParam & MK_SHIFT)
+    {
+        event.keyboardEvent.shiftDown = true;
+    }
+    if (wParam & MK_CONTROL)
+    {
+        event.keyboardEvent.controlDown = true;
+    }
+    renderer->getEngine()->handleEvent(event);
 }
 
 static void mouseButtonEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -250,7 +250,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
     {
     case WM_KEYUP:
     case WM_KEYDOWN:
-		keyEvent(window, msg, wParam, lParam);
+        keyEvent(window, msg, wParam, lParam);
         break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONUP:
@@ -273,7 +273,7 @@ static int CreateRasterizerState(ID3D11Device* device, D3D11_RASTERIZER_DESC* de
     HRESULT hr = device->CreateRasterizerState(desc, out);
     if(FAILED(hr) || !*out)
     {
-		D3D11FatalError("Failed to create D3D11 rasterizer state");
+        D3D11FatalError("Failed to create D3D11 rasterizer state");
         return -1;
     }
     return 0;
@@ -284,7 +284,7 @@ static int CreateBlendState(ID3D11Device* device, D3D11_BLEND_DESC* desc, ID3D11
     HRESULT hr = device->CreateBlendState(desc, out);
     if(FAILED(hr) || !*out)
     {
-		D3D11FatalError("Failed to create D3D11 blend state");
+        D3D11FatalError("Failed to create D3D11 blend state");
         return -1;
     }
     return 0;
@@ -423,14 +423,14 @@ void RendererD3D11::initWindow()
     RegisterClassExW(&wc);
     
     DWORD style = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-	int x = CW_USEDEFAULT;
-	int y = CW_USEDEFAULT;
-	if (_fullscreen)
-	{
-		style = WS_POPUP;
-		x = 0;
-		y = 0;
-	}
+    int x = CW_USEDEFAULT;
+    int y = CW_USEDEFAULT;
+    if (_fullscreen)
+    {
+        style = WS_POPUP;
+        x = 0;
+        y = 0;
+    }
     RECT windowRect = {0, 0, (int) _size.width, (int) _size.height};
     AdjustWindowRect(&windowRect, style, FALSE);
     

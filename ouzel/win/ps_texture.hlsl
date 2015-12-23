@@ -11,5 +11,5 @@ Texture2D Texture0;
 
 void main(in VS2PS input, out float4 output0 : SV_TARGET0)
 {
-	output0 = Texture0.Sample(Sampler0, input.TexCoord) * input.Color;
+    output0 = Texture0.Sample(Sampler0, input.TexCoord) * input.Color;
 }

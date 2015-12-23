@@ -84,11 +84,11 @@ bool ShaderD3D11::initFromFiles(const std::string& fragmentShader, const std::st
     }
     
     hr = renderer->_device->CreateInputLayout(
-		g_VertexInputElements,
-		(UINT) CountOf(g_VertexInputElements),
-		vsData.data(),
-		vsData.size(),
-		&_inputLayout);
+        g_VertexInputElements,
+        (UINT) CountOf(g_VertexInputElements),
+        vsData.data(),
+        vsData.size(),
+        &_inputLayout);
     if(FAILED(hr) || !_inputLayout)
     {
         D3D11FatalError("Failed to create D3D11 input layout for vertex shader '%s'", vertexShader.c_str());

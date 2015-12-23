@@ -65,8 +65,8 @@ namespace ouzel
         ID3D11RasterizerState* _rasterizerState;
         ID3D11DepthStencilState* _depthStencilState;
 
-		D3D11DynamicBuffer _vertexBuffer;
-		D3D11DynamicBuffer _constantBuffer;
+        D3D11DynamicBuffer _vertexBuffer;
+        D3D11DynamicBuffer _constantBuffer;
         
         friend class ShaderD3D11;
     };

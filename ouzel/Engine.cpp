@@ -28,10 +28,10 @@ namespace ouzel
     {
         Settings settings;
 #ifdef OUZEL_PLATFORM_WINDOWS
-		settings.driver = Renderer::Driver::DIRECT3D11;
+        settings.driver = Renderer::Driver::DIRECT3D11;
 #endif
 
-		_fileSystem = new FileSystem();
+        _fileSystem = new FileSystem();
         
         OuzelInit(settings);
         
@@ -40,7 +40,7 @@ namespace ouzel
 #if defined(OUZEL_PLATFORM_OSX) || defined(OUZEL_PLATFORM_IOS)
             case Renderer::Driver::OPENGL:
                 _renderer = new RendererOGL(settings.size, settings.fullscreen, this);
-				break;
+                break;
 #endif
 #ifdef OUZEL_PLATFORM_WINDOWS
             case Renderer::Driver::DIRECT3D11:
@@ -86,7 +86,7 @@ namespace ouzel
                 
                 if (msg.message == WM_QUIT)
                 {
-					running = false;
+                    running = false;
                     break;
                 }
             }
