@@ -8,14 +8,12 @@
 #include <stdarg.h>
 
 #include "RendererD3D11.h"
+#include "ShaderD3D11.h"
 #include "EventHander.h"
 #include "Engine.h"
 #include "Utils.h"
 
 using namespace ouzel;
-
-
-#define SAFE_RELEASE(x) if(x){ (x)->Release(); x = NULL; }
 
 
 #ifdef _MSC_VER
@@ -24,7 +22,7 @@ using namespace ouzel;
 #  define VSPRINTF_LEN( str, args ) vsnprintf( NULL, 0, str, args )
 #endif
 
-static void D3D11FatalError(const char* err, ...)
+void D3D11FatalError(const char* err, ...)
 {
 	va_list args;
 	va_start(args, err);
@@ -529,7 +527,7 @@ void RendererD3D11::initD3D11()
         NULL, // adapter
         D3D_DRIVER_TYPE_HARDWARE,
         NULL, // software rasterizer (unused)
-        0,//D3D11_CREATE_DEVICE_DEBUG, // flags
+        D3D11_CREATE_DEVICE_DEBUG, // flags
         NULL, // feature levels
         0, // ^^
         D3D11_SDK_VERSION,
@@ -620,6 +618,9 @@ void RendererD3D11::initD3D11()
         D3D11FatalError("Failed to create D3D11 depth stencil state");
         return;
     }
+    
+    Shader* textureShader = loadShaderFromFiles("ps_texture.cso", "vs_common.cso");
+    _shaders[SHADER_TEXTURE] = textureShader;
 }
 
 RendererD3D11::~RendererD3D11()
@@ -636,6 +637,19 @@ RendererD3D11::~RendererD3D11()
     SAFE_RELEASE(_device);
     
     DestroyWindow(_window);
+}
+
+Shader* RendererD3D11::loadShaderFromFiles(const std::string& fragmentShader, const std::string& vertexShader)
+{
+    ShaderD3D11* shader = new ShaderD3D11(this);
+    
+    if (!shader->initFromFiles(fragmentShader, vertexShader))
+    {
+        delete shader;
+        shader = nullptr;
+    }
+    
+    return shader;
 }
 
 void RendererD3D11::clear()

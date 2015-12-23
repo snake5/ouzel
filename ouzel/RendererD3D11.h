@@ -8,6 +8,12 @@
 
 #include "Renderer.h"
 
+
+#define SAFE_RELEASE(x) if(x){ (x)->Release(); x = NULL; }
+
+void D3D11FatalError(const char* err, ...);
+
+
 namespace ouzel
 {
     class D3D11DynamicBuffer
@@ -38,6 +44,8 @@ namespace ouzel
         
         void initWindow();
         void initD3D11();
+        
+        virtual Shader* loadShaderFromFiles(const std::string& fragmentShader, const std::string& vertexShader) override;
 
         virtual void clear() override;
         virtual void flush() override;
@@ -59,5 +67,7 @@ namespace ouzel
 
 		D3D11DynamicBuffer _vertexBuffer;
 		D3D11DynamicBuffer _constantBuffer;
+        
+        friend class ShaderD3D11;
     };
 }

@@ -89,4 +89,12 @@
       <UniqueIdentifier>{8d9452e8-1d54-4c40-b2c2-afc32b848b0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\ouzel\win\vs_common.hlsl">
+      <Filter>win32</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ouzel\win\ps_texture.hlsl">
+      <Filter>win32</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

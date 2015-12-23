@@ -30,6 +30,8 @@ namespace ouzel
 #ifdef OUZEL_PLATFORM_WINDOWS
 		settings.driver = Renderer::Driver::DIRECT3D11;
 #endif
+
+		_fileSystem = new FileSystem();
         
         OuzelInit(settings);
         
@@ -55,8 +57,6 @@ namespace ouzel
         _scene->init();
         
         _soundManager = new SoundManager(this);
-        
-        _fileSystem = new FileSystem();
         
         _previousFrameTime = getCurrentMicroSeconds();
     }

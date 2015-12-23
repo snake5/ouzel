@@ -30,6 +30,10 @@ namespace ouzel
         {
             texture.second->release();
         }
+		for (std::pair<std::string, Shader*> shader : _shaders)
+		{
+			shader.second->release();
+		}
     }
     
     void Renderer::recalculateProjection()
