@@ -53,6 +53,8 @@ namespace ouzel
         CFRelease(urlString);
 
 		appPath = std::string(temporaryCString) + "Contents/Resources/";
+#elif defined(OUZEL_PLATFORM_WINDOWS)
+        appPath = "Resources/";
 #endif
 
         std::string str = appPath + filename;

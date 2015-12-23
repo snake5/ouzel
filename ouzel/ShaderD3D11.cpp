@@ -17,6 +17,11 @@ bool LoadBinaryFile(FileSystem* fs, const std::string& name, ByteArray& out)
 {
     std::string path = fs->getPath(name);
     std::ifstream file(path, std::ios::binary);
+	if (file.fail())
+	{
+		log("failed to open file '%s' (real path = %s)", name.c_str(), path.c_str());
+		return false;
+	}
     file.seekg(0, std::ios::end);
     out.reserve(file.tellg());
     file.seekg(0, std::ios::beg);

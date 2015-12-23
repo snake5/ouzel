@@ -570,6 +570,7 @@ void RendererD3D11::initD3D11()
     }
     
     Shader* textureShader = loadShaderFromFiles("ps_texture.cso", "vs_common.cso");
+    assert(textureShader && "Failed to load texture shader");
     _shaders[SHADER_TEXTURE] = textureShader;
 }
 

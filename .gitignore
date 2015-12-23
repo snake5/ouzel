@@ -9,3 +9,4 @@ build/ipch/
 *.opendb
 *.sdf
 *.user
+*.cso
