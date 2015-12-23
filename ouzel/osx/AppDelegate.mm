@@ -4,6 +4,8 @@
 #import "AppDelegate.h"
 #import "OpenGLView.h"
 #include "Engine.h"
+#include "Renderer.h"
+#include "Size2.h"
 
 @interface AppDelegate ()
 {
@@ -17,19 +19,29 @@
 {
     if (self = [super init])
     {
-        NSRect frame = NSMakeRect(100, 100, 800, 600);
+        _engine = new ouzel::Engine();
+        ouzel::Size2 size = _engine->getRenderer()->getSize();
+        
+        NSScreen* screen = [NSScreen mainScreen];
+        NSRect screenFrame = screen.frame;
+        
+        NSRect frame = NSMakeRect(screenFrame.size.width / 2 - size.width / 2,
+                                  screenFrame.size.height / 2 - size.height / 2,
+                                  size.width, size.height);
         
         NSUInteger windowStyleMask = NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
         
         _window  = [[NSWindow alloc] initWithContentRect:frame
                                                styleMask:windowStyleMask
                                                  backing:NSBackingStoreBuffered
-                                                   defer:NO];
+                                                   defer:NO
+                                                  screen:screen];
         
+        _window.acceptsMouseMovedEvents = YES;
         [_window setBackgroundColor:[NSColor blueColor]];
         [_window makeKeyAndOrderFront:self];
         
-        _engine = new ouzel::Engine();
+        [_window setTitle:[NSString stringWithUTF8String:_engine->getRenderer()->getTitle().c_str()]];
     }
     
     return self;

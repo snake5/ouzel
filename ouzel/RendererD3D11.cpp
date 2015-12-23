@@ -64,7 +64,7 @@ static void mouseButtonEvent(HWND window, UINT msg, WPARAM wParam, LPARAM lParam
     
     Event event;
     memset(&event, 0, sizeof(event));
-    event.type = isDown ? EventType::EVENT_TYPE_MOUSE_DOWN : EventType::EVENT_TYPE_MOUSE_UP;
+    event.type = isDown ? Event::Type::MOUSE_DOWN : Event::Type::MOUSE_UP;
     event.mouseButton = button;
     event.mousePosition = renderer->absoluteToWorldLocation(pos);
     if(wParam & MK_SHIFT)
