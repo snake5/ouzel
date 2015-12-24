@@ -45,11 +45,17 @@ namespace ouzel
     {
         _engine->getRenderer()->activateShader(_shader);
         _engine->getRenderer()->activateTexture(_texture, 0);
-        _engine->getRenderer()->drawMeshBuffer(_meshBuffer, _transform);
-        
-        /*_engine->getRenderer()->activateTexture(_texture, 0);
-        _engine->getRenderer()->drawQuad(Rectangle(-_size.width / 2.0f, -_size.height / 2.0f, _size.width, _size.height), Vector3(1.0f, 1.0f, 1.0f), _transform);*/
-        
+
+        Matrix4 finalTransform = _engine->getRenderer()->getProjection() * _engine->getScene()->getCamera()->getTransform() * _transform;
+#ifdef OUZEL_PLATFORM_WINDOWS
+        int vsConstID = 0;
+#else
+        int vsConstID = _shader->getVertexShaderConstantId("...");
+#endif
+        _shader->setVertexShaderConstant(vsConstID, &finalTransform, 1);
+
+        _engine->getRenderer()->drawMeshBuffer(_meshBuffer);
+
         Node::draw();
     }
     

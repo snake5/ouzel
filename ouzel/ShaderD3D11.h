@@ -21,10 +21,32 @@ namespace ouzel
         virtual uint32_t getPixelShaderConstantId(const std::string& name) override;
         virtual uint32_t getVertexShaderConstantId(const std::string& name) override;
         
+        virtual bool setPixelShaderConstant(uint32_t index, const Vector3* vectors, uint32_t count) override { return setConstant(_psConstants, index, vectors, count); }
+        virtual bool setPixelShaderConstant(uint32_t index, const Vector4* vectors, uint32_t count) override { return setConstant(_psConstants, index, vectors, count); }
+        virtual bool setPixelShaderConstant(uint32_t index, const Matrix4* matrixes, uint32_t count) override { return setConstant(_psConstants, index, matrixes, count); }
+        
+        virtual bool setVertexShaderConstant(uint32_t index, const Vector3* vectors, uint32_t count) override { return setConstant(_vsConstants, index, vectors, count); }
+        virtual bool setVertexShaderConstant(uint32_t index, const Vector4* vectors, uint32_t count) override { return setConstant(_vsConstants, index, vectors, count); }
+        virtual bool setVertexShaderConstant(uint32_t index, const Matrix4* matrixes, uint32_t count) override { return setConstant(_vsConstants, index, matrixes, count); }
+        
+        template<class T> bool setConstant(std::vector<uint8_t>& buf, uint32_t index, const T* data, uint32_t count)
+        {
+            if (count)
+            {
+                size_t end = index + sizeof(*data) * count;
+                buf.resize(end);
+                memcpy(&buf[index], data, sizeof(*data) * count);
+                return true;
+            }
+            return false;
+        }
+        
     protected:
         ID3D11VertexShader* _vertexShader;
         ID3D11PixelShader* _pixelShader;
         ID3D11InputLayout* _inputLayout;
+        std::vector<uint8_t> _vsConstants;
+        std::vector<uint8_t> _psConstants;
 
         friend class RendererD3D11;
     };

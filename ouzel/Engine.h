@@ -4,6 +4,7 @@
 #pragma once
 
 #include <vector>
+#include "CompileConfig.h"
 #include "Noncopyable.h"
 #include "ReferenceCounted.h"
 #include "Renderer.h"

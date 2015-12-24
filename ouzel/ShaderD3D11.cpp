@@ -119,11 +119,13 @@ void ShaderD3D11::initFromBytecode(const void* psCode, size_t psSize, const void
 
 uint32_t ShaderD3D11::getPixelShaderConstantId(const std::string& name)
 {
+    D3D11FatalError("Error: getPixelShaderConstantId doesn't work with D3D11");
     return 0;
 }
 
 uint32_t ShaderD3D11::getVertexShaderConstantId(const std::string& name)
 {
+    D3D11FatalError("Error: getVertexShaderConstantId doesn't work with D3D11");
     return 0;
 }
 

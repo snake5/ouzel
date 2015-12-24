@@ -410,7 +410,8 @@ RendererD3D11::RendererD3D11(const Size2& size, bool fullscreen, Engine* engine)
     Renderer(size, fullscreen, engine, Driver::DIRECT3D11),
     _fullscreen(fullscreen),
     _vertexBuffer(D3D11_BIND_VERTEX_BUFFER),
-    _constantBuffer(D3D11_BIND_CONSTANT_BUFFER)
+    _vsConstantBuffer(D3D11_BIND_CONSTANT_BUFFER),
+    _psConstantBuffer(D3D11_BIND_CONSTANT_BUFFER)
 {
     initWindow();
     initD3D11();
@@ -605,7 +606,8 @@ RendererD3D11::~RendererD3D11()
     SAFE_RELEASE(_rasterizerState);
     SAFE_RELEASE(_samplerState);
     _vertexBuffer.Free();
-    _constantBuffer.Free();
+    _vsConstantBuffer.Free();
+    _psConstantBuffer.Free();
     SAFE_RELEASE(_rtView);
     SAFE_RELEASE(_backBuffer);
     SAFE_RELEASE(_swapChain);
@@ -690,16 +692,18 @@ MeshBuffer* RendererD3D11::createMeshBuffer(const std::vector<uint16_t>& indices
     return meshBuffer;
 }
 
-bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transform)
+bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer)
 {
     auto buffer = (MeshBufferD3D11*) meshBuffer;
     auto shader = (ShaderD3D11*) _activeShader;
-
-    Matrix4 finalTransform = _projection * _engine->getScene()->getCamera()->getTransform() * transform;
-    _constantBuffer.Upload(_device, _context, &finalTransform, sizeof(Matrix4));
     
-    ID3D11Buffer* constantBuffers[1] = { _constantBuffer };
-    _context->VSSetConstantBuffers(0, 1, constantBuffers);
+    _vsConstantBuffer.Upload(_device, _context, shader->_vsConstants.data(), (UINT) shader->_vsConstants.size());
+    _psConstantBuffer.Upload(_device, _context, shader->_psConstants.data(), (UINT) shader->_psConstants.size());
+    
+    ID3D11Buffer* vsConstantBuffers[1] = { _vsConstantBuffer };
+    _context->VSSetConstantBuffers(0, 1, vsConstantBuffers);
+    ID3D11Buffer* psConstantBuffers[1] = { _psConstantBuffer };
+    _context->PSSetConstantBuffers(0, 1, psConstantBuffers);
     _context->VSSetShader(shader->_vertexShader, NULL, 0);
     _context->PSSetShader(shader->_pixelShader, NULL, 0);
     _context->RSSetState(_rasterizerState);

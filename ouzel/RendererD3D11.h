@@ -53,7 +53,7 @@ namespace ouzel
         virtual Texture* loadTextureFromFile(const std::string& filename) override;
         
         virtual MeshBuffer* createMeshBuffer(const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices);
-        virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transform = Matrix4());
+        virtual bool drawMeshBuffer(MeshBuffer* meshBuffer);
         
     private:
         bool _fullscreen;
@@ -70,7 +70,8 @@ namespace ouzel
         ID3D11DepthStencilState* _depthStencilState;
         
         D3D11DynamicBuffer _vertexBuffer;
-        D3D11DynamicBuffer _constantBuffer;
+        D3D11DynamicBuffer _vsConstantBuffer;
+        D3D11DynamicBuffer _psConstantBuffer;
         
         friend class ShaderD3D11;
         friend class TextureD3D11;
