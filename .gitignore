@@ -10,3 +10,5 @@ build/ipch/
 *.sdf
 *.user
 *.cso
+build/D3D11Shaders.inl
+build/bin2h.exe

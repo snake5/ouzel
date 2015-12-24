@@ -15,6 +15,8 @@ namespace ouzel
         virtual ~ShaderD3D11();
         
         virtual bool initFromFiles(const std::string& fragmentShader, const std::string& vertexShader) override;
+        virtual bool initFromStrings(const std::string& fragmentShader, const std::string& vertexShader) override;
+        void initFromBytecode(const void* psCode, size_t psSize, const void* vsCode, size_t vsSize, const std::string& psFile, const std::string& vsFile);
         
         virtual uint32_t getPixelShaderConstantId(const std::string& name) override;
         virtual uint32_t getVertexShaderConstantId(const std::string& name) override;

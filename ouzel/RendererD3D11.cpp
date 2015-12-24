@@ -17,6 +17,8 @@
 #include "Camera.h"
 #include "Utils.h"
 
+#include "../build/D3D11Shaders.inl"
+
 using namespace ouzel;
 
 
@@ -581,7 +583,11 @@ void RendererD3D11::initD3D11()
         return;
     }
     
-    Shader* textureShader = loadShaderFromFiles("ps_texture.cso", "vs_common.cso");
+    std::string psCode(sizeof(D3D11_SHADER_PS_TEXTURE), 0);
+    memcpy(&psCode[0], D3D11_SHADER_PS_TEXTURE, sizeof(D3D11_SHADER_PS_TEXTURE));
+    std::string vsCode(sizeof(D3D11_SHADER_VS_COMMON), 0);
+    memcpy(&vsCode[0], D3D11_SHADER_VS_COMMON, sizeof(D3D11_SHADER_VS_COMMON));
+    Shader* textureShader = loadShaderFromStrings(psCode, vsCode);
     assert(textureShader && "Failed to load texture shader");
     _shaders[SHADER_TEXTURE] = textureShader;
 
@@ -642,6 +648,19 @@ Shader* RendererD3D11::loadShaderFromFiles(const std::string& fragmentShader, co
         shader = nullptr;
     }
     
+    return shader;
+}
+
+Shader* RendererD3D11::loadShaderFromStrings(const std::string& fragmentShader, const std::string& vertexShader)
+{
+    ShaderD3D11* shader = new ShaderD3D11(this);
+
+    if (!shader->initFromStrings(fragmentShader, vertexShader))
+    {
+        delete shader;
+        shader = nullptr;
+    }
+
     return shader;
 }
 

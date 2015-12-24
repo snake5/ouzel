@@ -66,7 +66,6 @@ bool ShaderD3D11::initFromFiles(const std::string& fragmentShader, const std::st
         return false;
     }
     
-    auto renderer = (RendererD3D11*) _renderer;
     auto fs = _renderer->getEngine()->getFileSystem();
     ByteArray vsData, psData;
     if(LoadBinaryFile(fs, vertexShader, vsData) == false || LoadBinaryFile(fs, fragmentShader, psData) == false)
@@ -74,33 +73,48 @@ bool ShaderD3D11::initFromFiles(const std::string& fragmentShader, const std::st
         return false;
     }
     
-    HRESULT hr = renderer->_device->CreateVertexShader(vsData.data(), vsData.size(), NULL, &_vertexShader);
-    if(FAILED(hr) || !_vertexShader)
+    initFromBytecode(psData.data(), psData.size(), vsData.data(), vsData.size(), fragmentShader, vertexShader);
+    return true;
+}
+
+bool ShaderD3D11::initFromStrings(const std::string& fragmentShader, const std::string& vertexShader)
+{
+    if (!Shader::initFromStrings(fragmentShader, vertexShader))
     {
-        D3D11FatalError("Failed to create a D3D11 vertex shader from file '%s'", vertexShader.c_str());
         return false;
     }
     
-    hr = renderer->_device->CreatePixelShader(psData.data(), psData.size(), NULL, &_pixelShader);
+    std::string file = "<internal>";
+    initFromBytecode(fragmentShader.data(), fragmentShader.size(), vertexShader.data(), vertexShader.size(), file, file);
+    return true;
+}
+
+void ShaderD3D11::initFromBytecode(const void* psCode, size_t psSize, const void* vsCode, size_t vsSize, const std::string& psFile, const std::string& vsFile)
+{
+    auto renderer = (RendererD3D11*) _renderer;
+    
+    HRESULT hr = renderer->_device->CreateVertexShader(vsCode, vsSize, NULL, &_vertexShader);
+    if(FAILED(hr) || !_vertexShader)
+    {
+        D3D11FatalError("Failed to create a D3D11 vertex shader from file '%s'", vsFile.c_str());
+    }
+    
+    hr = renderer->_device->CreatePixelShader(psCode, psSize, NULL, &_pixelShader);
     if(FAILED(hr) || !_pixelShader)
     {
-        D3D11FatalError("Failed to create a D3D11 pixel shader from file '%s'", fragmentShader.c_str());
-        return false;
+        D3D11FatalError("Failed to create a D3D11 pixel shader from file '%s'", psFile.c_str());
     }
     
     hr = renderer->_device->CreateInputLayout(
         g_VertexInputElements,
         (UINT) CountOf(g_VertexInputElements),
-        vsData.data(),
-        vsData.size(),
+        vsCode,
+        vsSize,
         &_inputLayout);
     if(FAILED(hr) || !_inputLayout)
     {
-        D3D11FatalError("Failed to create D3D11 input layout for vertex shader '%s'", vertexShader.c_str());
-        return false;
+        D3D11FatalError("Failed to create D3D11 input layout for vertex shader '%s'", vsFile.c_str());
     }
-    
-    return true;
 }
 
 uint32_t ShaderD3D11::getPixelShaderConstantId(const std::string& name)
