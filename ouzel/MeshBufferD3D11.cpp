@@ -12,16 +12,16 @@ MeshBufferD3D11::MeshBufferD3D11(Renderer* renderer):
 
 MeshBufferD3D11::~MeshBufferD3D11()
 {
-	_vertexBuffer.Free();
-	_indexBuffer.Free();
+    _vertexBuffer.Free();
+    _indexBuffer.Free();
 }
 
 bool MeshBufferD3D11::initFromData(const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices)
 {
-	auto renderer = (RendererD3D11*) _renderer;
-	_indexCount = (UINT) indices.size();
-	_vertexBuffer.Upload(renderer->_device, renderer->_context, vertices.data(), (UINT) vertices.size() * sizeof(Vertex));
-	_indexBuffer.Upload(renderer->_device, renderer->_context, indices.data(), (UINT) indices.size() * sizeof(uint16_t));
-	return true;
+    auto renderer = (RendererD3D11*) _renderer;
+    _indexCount = (UINT) indices.size();
+    _vertexBuffer.Upload(renderer->_device, renderer->_context, vertices.data(), (UINT) vertices.size() * sizeof(Vertex));
+    _indexBuffer.Upload(renderer->_device, renderer->_context, indices.data(), (UINT) indices.size() * sizeof(uint16_t));
+    return true;
 }
 

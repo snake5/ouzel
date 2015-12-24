@@ -24,6 +24,6 @@ namespace ouzel
         ID3D11PixelShader* _pixelShader;
         ID3D11InputLayout* _inputLayout;
 
-		friend class RendererD3D11;
+        friend class RendererD3D11;
     };
 }

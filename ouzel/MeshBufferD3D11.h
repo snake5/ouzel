@@ -21,7 +21,7 @@ namespace ouzel
         D3D11DynamicBuffer _indexBuffer;
         UINT _indexCount;
 
-		friend class RendererD3D11;
+        friend class RendererD3D11;
     };
 }
 

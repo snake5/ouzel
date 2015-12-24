@@ -9,7 +9,6 @@ using namespace ouzel;
 TextureD3D11::TextureD3D11(Renderer* renderer):
     Texture(renderer), _texture(nullptr), _rsrcView(nullptr)
 {
-    
 }
 
 TextureD3D11::~TextureD3D11()
@@ -47,7 +46,7 @@ bool TextureD3D11::initFromFile(const std::string& filename)
     textureDesc.SampleDesc.Count = 1;
     textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     
-	D3D11_SUBRESOURCE_DATA initialData = { image->getData(), (UINT) width * 4 };
+    D3D11_SUBRESOURCE_DATA initialData = { image->getData(), (UINT) width * 4 };
     HRESULT hr = renderer->_device->CreateTexture2D(&textureDesc, &initialData, &_texture);
     if(FAILED(hr) || !_texture)
     {

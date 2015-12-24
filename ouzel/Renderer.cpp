@@ -26,21 +26,21 @@ namespace ouzel
 
     Renderer::~Renderer()
     {
-		assert(_textures.size() && "Not all textures have been released");
-		assert(_shaders.size() && "Not all shaders have been released");
+        assert(_textures.size() && "Not all textures have been released");
+        assert(_shaders.size() && "Not all shaders have been released");
     }
 
-	void Renderer::freeInternalResources()
-	{
-		for (std::pair<std::string, Texture*> texture : _textures)
-		{
-			texture.second->release();
-		}
-		for (std::pair<std::string, Shader*> shader : _shaders)
-		{
-			shader.second->release();
-		}
-	}
+    void Renderer::freeInternalResources()
+    {
+        for (std::pair<std::string, Texture*> texture : _textures)
+        {
+            texture.second->release();
+        }
+        for (std::pair<std::string, Shader*> shader : _shaders)
+        {
+            shader.second->release();
+        }
+    }
     
     void Renderer::recalculateProjection()
     {

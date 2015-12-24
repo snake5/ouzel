@@ -585,14 +585,14 @@ void RendererD3D11::initD3D11()
     assert(textureShader && "Failed to load texture shader");
     _shaders[SHADER_TEXTURE] = textureShader;
 
-	D3D11_VIEWPORT viewport = { 0, 0, _size.width, _size.height, 0.0f, 1.0f };
-	_context->RSSetViewports(1, &viewport);
-	_context->OMSetRenderTargets(1, &_rtView, nullptr);
+    D3D11_VIEWPORT viewport = { 0, 0, _size.width, _size.height, 0.0f, 1.0f };
+    _context->RSSetViewports(1, &viewport);
+    _context->OMSetRenderTargets(1, &_rtView, nullptr);
 }
 
 RendererD3D11::~RendererD3D11()
 {
-	freeInternalResources();
+    freeInternalResources();
 
     SAFE_RELEASE(_depthStencilState);
     SAFE_RELEASE(_blendState);
@@ -606,16 +606,16 @@ RendererD3D11::~RendererD3D11()
     
 #if D3D11_DEBUG
     ID3D11Debug *d3dDebug = nullptr;
-	if (SUCCEEDED(_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&d3dDebug)))
-	{
-		_context->ClearState();
-		_context->Flush();
-		SAFE_RELEASE(_context);
-		d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
-		d3dDebug->Release();
-	}
+    if (SUCCEEDED(_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&d3dDebug)))
+    {
+        _context->ClearState();
+        _context->Flush();
+        SAFE_RELEASE(_context);
+        d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+        d3dDebug->Release();
+    }
 #endif
-	SAFE_RELEASE(_context);
+    SAFE_RELEASE(_context);
     SAFE_RELEASE(_device);
     
     DestroyWindow(_window);
@@ -676,11 +676,11 @@ bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transf
     auto buffer = (MeshBufferD3D11*) meshBuffer;
     auto shader = (ShaderD3D11*) _activeShader;
 
-	Matrix4 finalTransform = _projection * _engine->getScene()->getCamera()->getTransform() * transform;
-	_constantBuffer.Upload(_device, _context, &finalTransform, sizeof(Matrix4));
+    Matrix4 finalTransform = _projection * _engine->getScene()->getCamera()->getTransform() * transform;
+    _constantBuffer.Upload(_device, _context, &finalTransform, sizeof(Matrix4));
     
-	ID3D11Buffer* constantBuffers[1] = { _constantBuffer };
-	_context->VSSetConstantBuffers(0, 1, constantBuffers);
+    ID3D11Buffer* constantBuffers[1] = { _constantBuffer };
+    _context->VSSetConstantBuffers(0, 1, constantBuffers);
     _context->VSSetShader(shader->_vertexShader, NULL, 0);
     _context->PSSetShader(shader->_pixelShader, NULL, 0);
     _context->RSSetState(_rasterizerState);
@@ -704,9 +704,9 @@ bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer, const Matrix4& transf
     UINT strides[1] = { sizeof(Vertex) };
     UINT offsets[1] = { 0 };
     _context->IASetVertexBuffers(0, 1, buffers, strides, offsets);
-	_context->IASetIndexBuffer(buffer->_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    _context->IASetIndexBuffer(buffer->_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	_context->DrawIndexed(buffer->_indexCount, 0, 0);
+    _context->DrawIndexed(buffer->_indexCount, 0, 0);
     
     return true;
 }

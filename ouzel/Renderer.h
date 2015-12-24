@@ -40,7 +40,7 @@ namespace ouzel
         
         Renderer(const Size2& size, bool fullscreen, Engine* engine, Driver driver = Driver::NONE);
         virtual ~Renderer();
-		void freeInternalResources();
+        void freeInternalResources();
         
         Engine* getEngine() const { return _engine; }
         Driver getDriver() const { return _driver; }
